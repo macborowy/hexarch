@@ -1,8 +1,6 @@
-﻿using HexArch.ApplicationCore.Repositories;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -21,19 +19,14 @@ namespace HexArch.Web
         {
             ConfigureCommonServices(services);
 
-            services.AddDbContext<Infrastructure.EntityFrameworkDataAccess.Context>(options =>
-            {
-                options.UseSqlServer("Data Source=.;Initial Catalog=Empty;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
-            });
-            services.AddScoped<IStudentReadOnlyRepository, Infrastructure.EntityFrameworkDataAccess.Repositories.StudentReadOnlyRepository>();
+            services.AddCustomEntityFrameworkDataAccess();
         }
 
         public void ConfigureDevelopmentServices(IServiceCollection services)
         {
             ConfigureCommonServices(services);
 
-            services.AddSingleton<Infrastructure.InMemoryDataAccess.Context>();
-            services.AddScoped<IStudentReadOnlyRepository, Infrastructure.InMemoryDataAccess.Repositories.StudentReadOnlyRepository>();
+            services.AddCustomInMemoryDataAccess();
         }
 
         public void ConfigureCommonServices(IServiceCollection services)
