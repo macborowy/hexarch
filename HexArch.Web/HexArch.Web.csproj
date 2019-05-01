@@ -10,4 +10,9 @@
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\HexArch.ApplicationCore\HexArch.ApplicationCore.csproj" />
+    <ProjectReference Include="..\HexArch.Infrastructure\HexArch.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>

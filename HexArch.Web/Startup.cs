@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using HexArch.ApplicationCore.Repositories;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -15,13 +17,30 @@ namespace HexArch.Web
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
+        {
+            ConfigureCommonServices(services);
+
+            services.AddDbContext<Infrastructure.EntityFrameworkDataAccess.Context>(options =>
+            {
+                options.UseSqlServer("Data Source=.;Initial Catalog=Empty;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
+            });
+            services.AddScoped<IStudentReadOnlyRepository, Infrastructure.EntityFrameworkDataAccess.Repositories.StudentReadOnlyRepository>();
+        }
+
+        public void ConfigureDevelopmentServices(IServiceCollection services)
+        {
+            ConfigureCommonServices(services);
+
+            services.AddSingleton<Infrastructure.InMemoryDataAccess.Context>();
+            services.AddScoped<IStudentReadOnlyRepository, Infrastructure.InMemoryDataAccess.Repositories.StudentReadOnlyRepository>();
+        }
+
+        public void ConfigureCommonServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
